@@ -36,7 +36,7 @@ GLuint vao2;
 
 float hour = 0.0;
 float day = 0.0;
-float inc = 0.5;
+float inc = 0.1;
 
 
 
@@ -103,8 +103,7 @@ void renderScene(void) {
 
 	vsml->matrixToGL(VSMathLib::PROJ_VIEW_MODEL);
 
-	float rotation = 360 * day / 365.0;
-	shader.setUniform("angle", rotation);
+	shader.setUniform("angle", 360.0f * day / 365.0f);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, 0);
@@ -114,14 +113,17 @@ void renderScene(void) {
 
 	glUseProgram(shader2.getProgramIndex());
 
-	float translate[4][4] = {
-		{1, 0, 0, 0},
-		{0, 1, 0, 0},
-		{0, 0, 1, 0},
-		{0, 0, -4, 1}
-	};
+	//float translate[4][4] = {
+	//	{1, 0, 0, 0},
+	//	{0, 1, 0, 0},
+	//	{0, 0, 1, 0},
+	//	{0, 0, -4, 1}
+	//};
 
-	shader2.setUniform("translation", translate);
+	//shader2.setUniform("translation", translate);
+	shader2.setUniform("scale", 0.5f);
+	shader2.setUniform("offset", 2.0f);
+	shader2.setUniform("angle", (360.0f * day / 365.0f) * 2);
 
 
 	glBindVertexArray(vao2);
@@ -434,7 +436,7 @@ int main(int argc, char** argv) {
 	glutInitContextFlags(GLUT_DEBUG);
 
 	glutInitWindowPosition(100, 100);
-	glutInitWindowSize(512, 512);
+	glutInitWindowSize(800, 350);
 	glutCreateWindow("Lighthouse3D - Simple Shader Demo");
 
 	//  Callback Registration
