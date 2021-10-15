@@ -36,7 +36,7 @@ GLuint vao2;
 
 float hour = 0.0;
 float day = 0.0;
-float inc = 0.1;
+float inc = 1.0;
 
 
 
@@ -85,70 +85,77 @@ void renderScene(void) {
 	hour = hour - ((int)(hour / 24)) * 24;
 	day = day - ((int)(day / 365)) * 365;
 
+	// use our shader
+	glUseProgram(shader.getProgramIndex());
+
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	
+	// RENDER SUN
+	
 	// load identity matrices	
 	vsml->loadIdentity(VSMathLib::VIEW);
 	vsml->loadIdentity(VSMathLib::MODEL);
 	// set the camera using a function similar to gluLookAt
 	vsml->lookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
-	//vsml->lookAt(-2.39596820, 3.90001798, 2.57132173, 0,0,0, 0,1,0);
 
-	// use our shader
-	glUseProgram(shader.getProgramIndex());
-
-	//vsml->pushMatrix(VSMathLib::MODEL);
-
-	//vsml->rotate(360 * day / 365.0, 0, 1, 0);
-	//vsml->rotate(15.0, 1.0, 0.0, 0.0);
-
-	vsml->matrixToGL(VSMathLib::PROJ_VIEW_MODEL);
-
-	shader.setUniform("angle", 360.0f * day / 365.0f);
+	vsml->rotate(360 * day / 365.0, 0, 1, 0);
+	vsml->rotate(15.0, 1.0, 0.0, 0.0);
 
 	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, 0);
 
-	//vsml->matricesToGL();
-	//vsml->popMatrix(VSMathLib::MODEL);
-
-	glUseProgram(shader2.getProgramIndex());
-
-	//float translate[4][4] = {
-	//	{1, 0, 0, 0},
-	//	{0, 1, 0, 0},
-	//	{0, 0, 1, 0},
-	//	{0, 0, -4, 1}
-	//};
-
-	//shader2.setUniform("translation", translate);
-	shader2.setUniform("scale", 0.5f);
-	shader2.setUniform("offset", 2.0f);
-	shader2.setUniform("angle", (360.0f * day / 365.0f) * 2);
+	vsml->matricesToGL();
 
 
-	glBindVertexArray(vao2);
+	// RENDER EARTH
+
+	// load identity matrices	
+	vsml->loadIdentity(VSMathLib::VIEW);
+	vsml->loadIdentity(VSMathLib::MODEL);
+	// set the camera using a function similar to gluLookAt
+	vsml->lookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
+
+	vsml->rotate(360.0 * day / 365.0, 0.0, 1.0, 0.0);
+	vsml->rotate(15.0, 1.0, 0.0, 0.0);
+
+	vsml->translate(4, 0, 0);
+
+	vsml->scale(0.4, 0.4, 0.4);
+
+	vsml->translate(0.5, 0.5, 0.5);
+	vsml->rotate(360.0 * hour / 24.0, 0.0, 1.0, 0.0);
+	vsml->translate(-0.5, -0.5, -0.5);
+
+	glBindVertexArray(vao);
 	glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, 0);
 
+	vsml->matricesToGL();
 
-	//glBindVertexArray(vao);
-	//local1 = translate(local1, vec3(0.0, 1.0f, 0.0));
-	//glUniformMatrix4fv(matrix_location, 1, GL_FALSE, local1.m);
-	//glBindVertexArray(_vertexArray1);
-	//local1 = translate(local1, vec3(0.0, -1.0f, 0.0));
-	//glUniformMatrix4fv(matrix_location, 1, GL_FALSE, local1.m);
 
-	// render VAO
-	//glBindVertexArray(vao);
+	// RENDER MOON
 
-	//vsml->pushMatrix(VSMathLib::MODEL);
-	//vsml->translate(i, 0, 100);
-	//float scale[4] = { i, i, 1, 1 };
-	//shader.setUniform("scale", scale);
+	// load identity matrices	
+	vsml->loadIdentity(VSMathLib::VIEW);
+	vsml->loadIdentity(VSMathLib::MODEL);
+	// set the camera using a function similar to gluLookAt
+	vsml->lookAt(camX, camY, camZ, 0, 0, 0, 0, 1, 0);
 
-	//glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, 0);
-	//vsml->popMatrix(VSMathLib::MODEL);
+	vsml->rotate(360.0 * day / 365.0, 0.0, 1.0, 0.0);
+	vsml->rotate(15.0, 1.0, 0.0, 0.0);
 
-	//swap buffers
+	vsml->translate(4, 0, 0);
+
+	vsml->rotate(360.0 * 4 * day / 365.0, 0.0, 1.0, 0.0);
+	vsml->translate(0.7, 0, 0);
+
+	vsml->scale(0.1, 0.1, 0.1);
+
+	glBindVertexArray(vao);
+	glDrawElements(GL_TRIANGLES, faceCount * 3, GL_UNSIGNED_INT, 0);
+
+	vsml->matricesToGL();
+
+
 	glutSwapBuffers();
 }
 
